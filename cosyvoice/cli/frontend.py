@@ -24,17 +24,17 @@ import torchaudio
 import os
 import re
 import inflect
-try:
-    import ttsfrd
-    use_ttsfrd = True
-except ImportError:
-    print("failed to import ttsfrd, use wetext instead")
-    from wetext import Normalizer as ZhNormalizer
-    from wetext import Normalizer as EnNormalizer
-    use_ttsfrd = False
+# try:
+#     import ttsfrd
+#     use_ttsfrd = True
+# except ImportError:
+#     print("failed to import ttsfrd, use wetext instead")
+#     from wetext import Normalizer as ZhNormalizer
+#     from wetext import Normalizer as EnNormalizer
+#     use_ttsfrd = False
+use_ttsfrd = False
 from cosyvoice.utils.file_utils import logging, load_wav
 from cosyvoice.utils.frontend_utils import contains_chinese, replace_blank, replace_corner_mark, remove_bracket, spell_out_number, split_paragraph, is_only_punctuation
-
 
 class CosyVoiceFrontEnd:
 
@@ -68,8 +68,8 @@ class CosyVoiceFrontEnd:
                 'failed to initialize ttsfrd resource'
             self.frd.set_lang_type('pinyinvg')
         else:
-            self.zh_tn_model = ZhNormalizer(remove_erhua=False)
-            self.en_tn_model = EnNormalizer()
+            # self.zh_tn_model = ZhNormalizer(remove_erhua=False)
+            # self.en_tn_model = EnNormalizer()
             self.inflect_parser = inflect.engine()
 
     def _extract_text_token(self, text):
@@ -147,7 +147,7 @@ class CosyVoiceFrontEnd:
                 texts = list(split_paragraph(text, partial(self.tokenizer.encode, allowed_special=self.allowed_special), "zh", token_max_n=80,
                                              token_min_n=60, merge_len=20, comma_split=False))
             else:
-                text = self.en_tn_model.normalize(text)
+                # text = self.en_tn_model.normalize(text)
                 text = spell_out_number(text, self.inflect_parser)
                 texts = list(split_paragraph(text, partial(self.tokenizer.encode, allowed_special=self.allowed_special), "en", token_max_n=80,
                                              token_min_n=60, merge_len=20, comma_split=False))
@@ -164,14 +164,18 @@ class CosyVoiceFrontEnd:
         tts_text_token, tts_text_token_len = self._extract_text_token(tts_text)
         if zero_shot_spk_id == '':
             prompt_text_token, prompt_text_token_len = self._extract_text_token(prompt_text)
+            print(f"prompt_text_token shape: {prompt_text_token.shape}, prompt_text_token_len: {prompt_text_token_len}", flush=True)
             speech_feat, speech_feat_len = self._extract_speech_feat(prompt_wav)
+            print(f"speech_feat shape: {speech_feat.shape}, speech_feat_len: {speech_feat_len}", flush=True)
             speech_token, speech_token_len = self._extract_speech_token(prompt_wav)
+            print(f"speech_token shape: {speech_token.shape}, speech_token_len: {speech_token_len}", flush=True)
             if resample_rate == 24000:
                 # cosyvoice2, force speech_feat % speech_token = 2
                 token_len = min(int(speech_feat.shape[1] / 2), speech_token.shape[1])
                 speech_feat, speech_feat_len[:] = speech_feat[:, :2 * token_len], 2 * token_len
                 speech_token, speech_token_len[:] = speech_token[:, :token_len], token_len
             embedding = self._extract_spk_embedding(prompt_wav)
+            print(f"spk_embedding shape: {embedding.shape}", flush=True)
             model_input = {'prompt_text': prompt_text_token, 'prompt_text_len': prompt_text_token_len,
                            'llm_prompt_speech_token': speech_token, 'llm_prompt_speech_token_len': speech_token_len,
                            'flow_prompt_speech_token': speech_token, 'flow_prompt_speech_token_len': speech_token_len,

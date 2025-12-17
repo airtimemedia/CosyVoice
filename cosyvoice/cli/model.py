@@ -21,9 +21,9 @@ import time
 from torch.nn import functional as F
 from contextlib import nullcontext
 import uuid
-from cosyvoice.utils.common import fade_in_out
-from cosyvoice.utils.file_utils import convert_onnx_to_trt, export_cosyvoice2_vllm
-from cosyvoice.utils.common import TrtContextWrapper
+from projects.CosyVoice.cosyvoice.utils.common import fade_in_out
+from projects.CosyVoice.cosyvoice.utils.file_utils import convert_onnx_to_trt, export_cosyvoice2_vllm
+from projects.CosyVoice.cosyvoice.utils.common import TrtContextWrapper
 
 
 class CosyVoiceModel:
@@ -322,6 +322,7 @@ class CosyVoice2Model(CosyVoiceModel):
         with self.lock:
             self.tts_speech_token_dict[this_uuid], self.llm_end_dict[this_uuid] = [], False
             self.hift_cache_dict[this_uuid] = None
+        print(f"Starting thread for UUID: {this_uuid}", flush=True)
         if source_speech_token.shape[1] == 0:
             p = threading.Thread(target=self.llm_job, args=(text, prompt_text, llm_prompt_speech_token, llm_embedding, this_uuid))
         else:
@@ -359,9 +360,11 @@ class CosyVoice2Model(CosyVoiceModel):
                                              finalize=True)
             yield {'tts_speech': this_tts_speech.cpu()}
         else:
+            print(f"Non-streaming mode for UUID: {this_uuid}", flush=True)
             # deal with all tokens
             p.join()
             this_tts_speech_token = torch.tensor(self.tts_speech_token_dict[this_uuid]).unsqueeze(dim=0)
+            print(f"Total tokens for UUID {this_uuid}: {this_tts_speech_token.shape[1]}", flush=True)
             this_tts_speech = self.token2wav(token=this_tts_speech_token,
                                              prompt_token=flow_prompt_speech_token,
                                              prompt_feat=prompt_speech_feat,

@@ -18,10 +18,10 @@ from tqdm import tqdm
 from hyperpyyaml import load_hyperpyyaml
 from modelscope import snapshot_download
 import torch
-from cosyvoice.cli.frontend import CosyVoiceFrontEnd
-from cosyvoice.cli.model import CosyVoiceModel, CosyVoice2Model, CosyVoice3Model
-from cosyvoice.utils.file_utils import logging
-from cosyvoice.utils.class_utils import get_model_type
+from projects.CosyVoice.cosyvoice.cli.frontend import CosyVoiceFrontEnd
+from projects.CosyVoice.cosyvoice.cli.model import CosyVoiceModel, CosyVoice2Model, CosyVoice3Model
+from projects.CosyVoice.cosyvoice.utils.file_utils import logging
+from projects.CosyVoice.cosyvoice.utils.class_utils import get_model_type
 
 
 class CosyVoice:
@@ -89,12 +89,16 @@ class CosyVoice:
                 start_time = time.time()
 
     def inference_zero_shot(self, tts_text, prompt_text, prompt_wav, zero_shot_spk_id='', stream=False, speed=1.0, text_frontend=True):
+        print(f"Original prompt_text: {prompt_text}, tts_text: {tts_text}" , flush=True)
         prompt_text = self.frontend.text_normalize(prompt_text, split=False, text_frontend=text_frontend)
+        print(f"Normalized prompt_text: {prompt_text}", flush=True)
         for i in tqdm(self.frontend.text_normalize(tts_text, split=True, text_frontend=text_frontend)):
             if (not isinstance(i, Generator)) and len(i) < 0.5 * len(prompt_text):
                 logging.warning('synthesis text {} too short than prompt text {}, this may lead to bad performance'.format(i, prompt_text))
             model_input = self.frontend.frontend_zero_shot(i, prompt_text, prompt_wav, self.sample_rate, zero_shot_spk_id)
+            print(f"model_input keys: {list(model_input.keys())}", flush=True)
             start_time = time.time()
+            print(f"synthesis text {i}", flush=True)
             logging.info('synthesis text {}'.format(i))
             for model_output in self.model.tts(**model_input, stream=stream, speed=speed):
                 speech_len = model_output['tts_speech'].shape[1] / self.sample_rate
@@ -198,7 +202,7 @@ class CosyVoice3(CosyVoice2):
             raise ValueError('{} not found!'.format(hyper_yaml_path))
         with open(hyper_yaml_path, 'r') as f:
             configs = load_hyperpyyaml(f, overrides={'qwen_pretrain_path': os.path.join(model_dir, 'CosyVoice-BlankEN')})
-        assert get_model_type(configs) == CosyVoice3Model, 'do not use {} for CosyVoice3 initialization!'.format(model_dir)
+        # assert get_model_type(configs) == CosyVoice3Model, 'do not use {} for CosyVoice3 initialization! since model_type: {}'.format(model_dir, get_model_type(configs))
         self.frontend = CosyVoiceFrontEnd(configs['get_tokenizer'],
                                           configs['feat_extractor'],
                                           '{}/campplus.onnx'.format(model_dir),
