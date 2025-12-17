@@ -73,9 +73,37 @@ def cosyvoice3_example():
     """
     cosyvoice = AutoModel(model_dir='pretrained_models/Fun-CosyVoice3-0.5B')
     # zero_shot usage
-    for i, j in enumerate(cosyvoice.inference_zero_shot('八百标兵奔北坡，北坡炮兵并排跑，炮兵怕把标兵碰，标兵怕碰炮兵炮。', 'You are a helpful assistant.<|endofprompt|>希望你以后能够做的比我还好呦。',
-                                                        './asset/zero_shot_prompt.wav', stream=False)):
-        torchaudio.save('zero_shot_{}.wav'.format(i), j['tts_speech'], cosyvoice.sample_rate)
+    
+    
+    prompt_texts = [
+        "موسیقی",
+        "こんにちは!素晴らしい一日を!仕事の仕事に興味深いプロジェクトを終わってきました。そして今、お昼に何を作っているか考えています。ラーメンか、もしかしたら寿司かもしれません。あ、あと、明年京都に旅行を行っています。テリブラサームを見るのが待ちきれないです!",
+        "こんにちは!素晴らしい一日を!本を終わって、夕食の作り方を考えています。ラーメンも食べてみようかな。もしかしたら、今からカレーの新しいレシピを試してみようかな。決めた決めた。"
+        "お、こんにちは!私もとても嬉しいです。良い一日をお過ごしください。カフェで仕事を終わって、今、パークに行くのを考えています。本当に素晴らしい一日ですね。もしかしたら、マッチャラテを食べるかもしれません。後に何か計画がありますか?"
+        "एक रेसिपी दो बार बनानी चाहिए, नहीं बनानी चाहिए न, जिन्दगी चोटी है, वही रेसिपी बार बार बार बार बार बनाए जाओ तो फिर मतलब क्या फायदा, मेरे को इसलिए बारी बारी रेस्टोरंट में काम करने से डर लगता है, वही रेसिपी रोज ठोको रोज ठोको, लेकिन एक रेसिपी ऐसी है, जो मुझे मेरी टीम ने सोचने पर मजबूर कर दिया, कि शब यू ए रेसिपी दो बारा बनाओ, क्योंकि आपने जो बनाई है, वो दाल मजबूर"
+    ]
+    
+    prompt_audios = [
+        "/root/.local/share/References/selected-samples_trimmed_24s/07868e6d-fb36-4cb7-b2a4-b34dfa9ecb13.wav",
+        "/root/.local/share/References/11_labs_p2v_trimmed_24s/730a700b-5429-485c-a74f-1e8577cfb669.wav",
+        "/root/.local/share/References/11_labs_p2v_trimmed_24s/94f6a8a0-87a3-474c-89d8-bc1fdeab9155.wav",
+        "/root/.local/share/References/11_labs_p2v_trimmed_24s/dc17db59-77de-462a-89d9-690bf992ea63.wav",
+        "/root/.local/share/References/selected-samples_trimmed_24s/62e57fdd-5455-4fd2-8e0e-2295afdea0b9.wav"
+    ]
+    
+    target_texts = [
+        "show me we are the world!",
+        "Hello! What a wonderful day! I just finished an interesting project for work, and now I'm thinking about what to make for lunch. Maybe some ramen, or perhaps sushi. Oh, and I'm also planning a trip to Kyoto next year. I can't wait to see the terriblasam!",
+        "Hello! What a wonderful day! I just finished a book and now I'm thinking about what to make for dinner. Maybe I'll try some ramen. Or perhaps I'll try a new curry recipe now. I've decided, I've decided.",
+        "Oh, hello! I'm also very happy. Have a great day. I just finished some work at a cafe and now I'm thinking about going to the park. It's really a wonderful day",
+        "maybe a recipe should be made twice, not made, life is short, if the same recipe is made again and again then what is the use, that's why I am afraid of working in restaurants one by one, the same recipe every day"
+    ]
+    
+    for index, (prompt_text, prompt_audio, target_text) in enumerate(zip(prompt_texts, prompt_audios, target_texts)):
+        print(f"Processing prompt_text: {prompt_text}, prompt_audio: {prompt_audio}, target_text: {target_text}")
+        for i, j in enumerate(cosyvoice.inference_zero_shot(target_text, f'You are a helpful assistant.<|endofprompt|>{prompt_text}',
+                                                            prompt_audio, stream=False)):
+            torchaudio.save(f'zero_shot_{index}_{i}.wav', j['tts_speech'], cosyvoice.sample_rate)
 
     # # fine grained control, for supported control, check cosyvoice/tokenizer/tokenizer.py#L280
     # for i, j in enumerate(cosyvoice.inference_cross_lingual('You are a helpful assistant.<|endofprompt|>[breath]因为他们那一辈人[breath]在乡里面住的要习惯一点，[breath]邻居都很活络，[breath]嗯，都很熟悉。[breath]',
