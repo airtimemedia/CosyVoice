@@ -76,27 +76,30 @@ def cosyvoice3_example():
     
     
     prompt_texts = [
-        "موسیقی",
-        "こんにちは!素晴らしい一日を!仕事の仕事に興味深いプロジェクトを終わってきました。そして今、お昼に何を作っているか考えています。ラーメンか、もしかしたら寿司かもしれません。あ、あと、明年京都に旅行を行っています。テリブラサームを見るのが待ちきれないです!",
-        "こんにちは!素晴らしい一日を!本を終わって、夕食の作り方を考えています。ラーメンも食べてみようかな。もしかしたら、今からカレーの新しいレシピを試してみようかな。決めた決めた。"
-        "お、こんにちは!私もとても嬉しいです。良い一日をお過ごしください。カフェで仕事を終わって、今、パークに行くのを考えています。本当に素晴らしい一日ですね。もしかしたら、マッチャラテを食べるかもしれません。後に何か計画がありますか?"
-        "एक रेसिपी दो बार बनानी चाहिए, नहीं बनानी चाहिए न, जिन्दगी चोटी है, वही रेसिपी बार बार बार बार बार बनाए जाओ तो फिर मतलब क्या फायदा, मेरे को इसलिए बारी बारी रेस्टोरंट में काम करने से डर लगता है, वही रेसिपी रोज ठोको रोज ठोको, लेकिन एक रेसिपी ऐसी है, जो मुझे मेरी टीम ने सोचने पर मजबूर कर दिया, कि शब यू ए रेसिपी दो बारा बनाओ, क्योंकि आपने जो बनाई है, वो दाल मजबूर"
+        "and tie the demand of my horse. Emperor of China, Emperor of Mongolia, I will be Emperor of the World!"
+        # "موسیقی",
+        # "こんにちは!素晴らしい一日を!仕事の仕事に興味深いプロジェクトを終わってきました。そして今、お昼に何を作っているか考えています。ラーメンか、もしかしたら寿司かもしれません。あ、あと、明年京都に旅行を行っています。テリブラサームを見るのが待ちきれないです!",
+        # "こんにちは!素晴らしい一日を!本を終わって、夕食の作り方を考えています。ラーメンも食べてみようかな。もしかしたら、今からカレーの新しいレシピを試してみようかな。決めた決めた。"
+        # "お、こんにちは!私もとても嬉しいです。良い一日をお過ごしください。カフェで仕事を終わって、今、パークに行くのを考えています。本当に素晴らしい一日ですね。もしかしたら、マッチャラテを食べるかもしれません。後に何か計画がありますか?"
+        # "एक रेसिपी दो बार बनानी चाहिए, नहीं बनानी चाहिए न, जिन्दगी चोटी है, वही रेसिपी बार बार बार बार बार बनाए जाओ तो फिर मतलब क्या फायदा, मेरे को इसलिए बारी बारी रेस्टोरंट में काम करने से डर लगता है, वही रेसिपी रोज ठोको रोज ठोको, लेकिन एक रेसिपी ऐसी है, जो मुझे मेरी टीम ने सोचने पर मजबूर कर दिया, कि शब यू ए रेसिपी दो बारा बनाओ, क्योंकि आपने जो बनाई है, वो दाल मजबूर"
     ]
     
     prompt_audios = [
-        "/root/.local/share/References/selected-samples_trimmed_24s/07868e6d-fb36-4cb7-b2a4-b34dfa9ecb13.wav",
-        "/root/.local/share/References/11_labs_p2v_trimmed_24s/730a700b-5429-485c-a74f-1e8577cfb669.wav",
-        "/root/.local/share/References/11_labs_p2v_trimmed_24s/94f6a8a0-87a3-474c-89d8-bc1fdeab9155.wav",
-        "/root/.local/share/References/11_labs_p2v_trimmed_24s/dc17db59-77de-462a-89d9-690bf992ea63.wav",
-        "/root/.local/share/References/selected-samples_trimmed_24s/62e57fdd-5455-4fd2-8e0e-2295afdea0b9.wav"
+        "/root/.local/share/References/selected-samples_trimmed_24s/13b63589-7a68-414d-8f3f-093747d91a6f.wav"
+        # "/root/.local/share/References/selected-samples_trimmed_24s/07868e6d-fb36-4cb7-b2a4-b34dfa9ecb13.wav",
+        # "/root/.local/share/References/11_labs_p2v_trimmed_24s/730a700b-5429-485c-a74f-1e8577cfb669.wav",
+        # "/root/.local/share/References/11_labs_p2v_trimmed_24s/94f6a8a0-87a3-474c-89d8-bc1fdeab9155.wav",
+        # "/root/.local/share/References/11_labs_p2v_trimmed_24s/dc17db59-77de-462a-89d9-690bf992ea63.wav",
+        # "/root/.local/share/References/selected-samples_trimmed_24s/62e57fdd-5455-4fd2-8e0e-2295afdea0b9.wav"
     ]
     
     target_texts = [
-        "show me we are the world!",
-        "Hello! What a wonderful day! I just finished an interesting project for work, and now I'm thinking about what to make for lunch. Maybe some ramen, or perhaps sushi. Oh, and I'm also planning a trip to Kyoto next year. I can't wait to see the terriblasam!",
-        "Hello! What a wonderful day! I just finished a book and now I'm thinking about what to make for dinner. Maybe I'll try some ramen. Or perhaps I'll try a new curry recipe now. I've decided, I've decided.",
-        "Oh, hello! I'm also very happy. Have a great day. I just finished some work at a cafe and now I'm thinking about going to the park. It's really a wonderful day",
-        "maybe a recipe should be made twice, not made, life is short, if the same recipe is made again and again then what is the use, that's why I am afraid of working in restaurants one by one, the same recipe every day"
+        "send yours first"
+        # "show me we are the world!",
+        # "Hello! What a wonderful day! I just finished an interesting project for work, and now I'm thinking about what to make for lunch. Maybe some ramen, or perhaps sushi. Oh, and I'm also planning a trip to Kyoto next year. I can't wait to see the terriblasam!",
+        # "Hello! What a wonderful day! I just finished a book and now I'm thinking about what to make for dinner. Maybe I'll try some ramen. Or perhaps I'll try a new curry recipe now. I've decided, I've decided.",
+        # "Oh, hello! I'm also very happy. Have a great day. I just finished some work at a cafe and now I'm thinking about going to the park. It's really a wonderful day",
+        # "maybe a recipe should be made twice, not made, life is short, if the same recipe is made again and again then what is the use, that's why I am afraid of working in restaurants one by one, the same recipe every day"
     ]
     
     for index, (prompt_text, prompt_audio, target_text) in enumerate(zip(prompt_texts, prompt_audios, target_texts)):

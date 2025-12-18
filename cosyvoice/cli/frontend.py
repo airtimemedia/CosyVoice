@@ -28,11 +28,15 @@ import inflect
 #     import ttsfrd
 #     use_ttsfrd = True
 # except ImportError:
-#     print("failed to import ttsfrd, use wetext instead")
-#     from wetext import Normalizer as ZhNormalizer
-#     from wetext import Normalizer as EnNormalizer
+#     # print("failed to import ttsfrd, use wetext instead")
+#     # from wetext import Normalizer as ZhNormalizer
+#     # from wetext import Normalizer as EnNormalizer
+#     # use_ttsfrd = False
+#     from nemo_text_processing.text_normalization.normalize import Normalizer
 #     use_ttsfrd = False
+from nemo_text_processing.text_normalization.normalize import Normalizer
 use_ttsfrd = False
+    
 from cosyvoice.utils.file_utils import logging, load_wav
 from cosyvoice.utils.frontend_utils import contains_chinese, replace_blank, replace_corner_mark, remove_bracket, spell_out_number, split_paragraph, is_only_punctuation
 
@@ -70,6 +74,7 @@ class CosyVoiceFrontEnd:
         else:
             # self.zh_tn_model = ZhNormalizer(remove_erhua=False)
             # self.en_tn_model = EnNormalizer()
+            self.normalizer = Normalizer(input_case="cased", lang="en")
             self.inflect_parser = inflect.engine()
 
     def _extract_text_token(self, text):
@@ -131,6 +136,8 @@ class CosyVoiceFrontEnd:
         if text_frontend is False or text == '':
             return [text] if split is True else text
         text = text.strip()
+        print(f"Original text: {text} ....", flush=True)
+        print(f"use_ttsfrd: {self.use_ttsfrd}", flush=True)
         if self.use_ttsfrd:
             texts = [i["text"] for i in json.loads(self.frd.do_voicegen_frd(text))["sentences"]]
             text = ''.join(texts)
@@ -147,7 +154,10 @@ class CosyVoiceFrontEnd:
                 texts = list(split_paragraph(text, partial(self.tokenizer.encode, allowed_special=self.allowed_special), "zh", token_max_n=80,
                                              token_min_n=60, merge_len=20, comma_split=False))
             else:
+                print(f"Text before normalization: {text}", flush=True)
                 # text = self.en_tn_model.normalize(text)
+                text = self.normalizer.normalize(text, verbose=False, punct_post_process=True)
+                print(f"Text after normalization: {text}", flush=True)
                 text = spell_out_number(text, self.inflect_parser)
                 texts = list(split_paragraph(text, partial(self.tokenizer.encode, allowed_special=self.allowed_special), "en", token_max_n=80,
                                              token_min_n=60, merge_len=20, comma_split=False))
